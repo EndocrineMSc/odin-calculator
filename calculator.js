@@ -85,14 +85,11 @@ function divideNumbers(number1, number2) {
         return 0;
     }
     else {
-        return (Number(number1) / Number(number2)).toFixed(3);
+        let result = Number(number1) / Number(number2);
+        resultArray = String(result).split(".");
+        return (resultArray[1] && resultArray[1].length >= 3) ? result.toFixed(3) : result;
     }
 }
-
-
-
-
-
 
 function checkIfOperator(contentString) {
     return contentString == "+" || contentString == "-" || contentString == "/" || contentString == "x";
