@@ -6,37 +6,51 @@ const buttonRows = Array.from(buttonContainer.getElementsByClassName("button-row
 let inputString = "";
 let firstNumber = NaN;
 let secondNumber = NaN;
+let operatorPresent = false;
 
 buttonRows.forEach(row => {
     Array.from(row.getElementsByTagName("button")).forEach(button => {
-        button.addEventListener("click", buttonHandler);            
+        button.addEventListener("click", () => buttonHandler(button.textContent));            
     });
 });
 
-function buttonHandler(event) {
-    let buttonContent = event.currentTarget.textContent;
-    let buttonContentNumber = Number(buttonContent);
+addEventListener("keydown", (event) => buttonHandler(event.key))
+
+function buttonHandler(input) {
+    if (input == "*") {
+        input = "x";
+    }
+    let buttonContentNumber = Number(input);
 
     if (!isNaN(buttonContentNumber)) {
+        if (inputString.length > 1 && checkIfOperator(inputString[inputString.length - 2])) {
+            operatorPresent = true;
+        }
+
         inputString += buttonContentNumber;
         operationsField.textContent = inputString;
     }
     else {
-        if (inputString != "" && checkIfOperator(buttonContent)) {
+        if (operatorPresent && checkIfOperator(input)) {
+            computeResult();
+            inputString += " " + input + " ";
+            operationsField.textContent = inputString;
+        }
+        else if (inputString != "" && checkIfOperator(input)) {
             if (checkIfOperator(inputString.charAt(inputString.length - 2))) {
-                inputString = inputString.replace(inputString.charAt(inputString.length - 2), buttonContent);
+                inputString = inputString.replace(inputString.charAt(inputString.length - 2), input);
             }
             else {
-                inputString += " " + buttonContent + " ";
+                inputString += " " + input + " ";
             }           
             resultField.textContent = inputString;
         }
-        else if (buttonContent == "Clear") {
+        else if (input == "Clear") {
             inputString = "";
             resultField.textContent = inputString;
             operationsField.textContent = "";
         }
-        else if (inputString.length > 1 && buttonContent == "Undo") {
+        else if (inputString.length > 1 && (input == "Undo" || input == "Backspace")) {
             inputArray = inputString.split(" ");
             if (inputArray.pop() == "") {
                 inputArray.pop();
@@ -44,39 +58,60 @@ function buttonHandler(event) {
             inputString = inputArray.join(" ");
             resultField.textContent = inputString;
         }
-        else if (inputString != "" && buttonContent == "=") {
-            inputArray = inputString.split(" ");
-            let result = 0;
-            switch (inputArray[1]) {
-                case "+":
-                    result = addNumbers(inputArray[0], inputArray[2]);
-                    break;
-                case "-":
-                    result = subtractNumbers(inputArray[0], inputArray[2]);
-                    break;
-                case "x":
-                    result = multiplyNumbers(inputArray[0], inputArray[2]);
-                    break;
-                case "/":
-                    result = divideNumbers(inputArray[0], inputArray[2]);
-                    break;
+        else if (inputString != "" && (input == "=" || input == "Enter")) {
+            computeResult();
+        }
+        else if (input == ",") {
+            if (inputString == "") {
+                inputString = "0,";
             }
-            resultField.textContent = result;
-            inputString = String(result);
+            else {
+                inputArray = inputString.split(" ");
+                if ((inputArray.length > 2 && !inputArray[2].includes(",")) 
+                    || (inputArray.length == 1 && !inputArray[0].includes(","))) {
+                    inputString += ".";
+                    operationsField.textContent = inputString;
+                }
+            }
         }
     }
 }
 
+function computeResult() {
+    inputArray = inputString.split(" ");
+    let result = 0;
+    switch (inputArray[1]) {
+        case "+":
+            result = addNumbers(inputArray[0], inputArray[2]);
+            break;
+        case "-":
+            result = subtractNumbers(inputArray[0], inputArray[2]);
+            break;
+        case "x":
+            result = multiplyNumbers(inputArray[0], inputArray[2]);
+            break;
+        case "/":
+            result = divideNumbers(inputArray[0], inputArray[2]);
+            break;
+    }
+    resultField.textContent = result;
+    inputString = String(result);
+    operatorPresent = false;
+}
+
 function addNumbers(number1, number2) {
-    return Number(number1) + Number(number2);
+    let result = Number(number1) + Number(number2);
+    return getDigitLimitedNumber(result);
 }
 
 function subtractNumbers(number1, number2) {
-    return Number(number1) - Number(number2);
+    let result = Number(number1) - Number(number2);
+    return getDigitLimitedNumber(result);
 }
 
 function multiplyNumbers(number1, number2) {
-    return Number(number1) * Number(number2);
+    let result = Number(number1) * Number(number2);
+    return getDigitLimitedNumber(result);
 }
 
 function divideNumbers(number1, number2) {
@@ -86,9 +121,13 @@ function divideNumbers(number1, number2) {
     }
     else {
         let result = Number(number1) / Number(number2);
-        resultArray = String(result).split(".");
-        return (resultArray[1] && resultArray[1].length >= 3) ? result.toFixed(3) : result;
+        return getDigitLimitedNumber(result);
     }
+}
+
+function getDigitLimitedNumber(number) {
+    numberArray = String(number).split(".");
+    return (numberArray[1] && numberArray[1].length >= 3) ? number.toFixed(3) : number;
 }
 
 function checkIfOperator(contentString) {
