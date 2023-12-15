@@ -23,14 +23,17 @@ body {
 .result-window {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: space-around;
     align-items: end;
-    background-color: whitesmoke;
+    background-color: rgba(58, 75, 58, 0.849);
+    color: lightgray;
     border-style: solid;
     border-width: 2px;
     border-radius: 10px;
+    border-color: black;
     width: 90%;
     height: 45%;
+    font-family: "Digital-7", "Serif";
 }
 
 .button-container {
@@ -51,12 +54,12 @@ body {
 
 .result {
     margin-bottom: -5%;
-    font-size: xx-large;
+    font-size: 75px;
     font-weight: bold;
 }
 
 .operation {
-    font-size: x-large;
+    font-size: 40px;
 }
 
 
@@ -64,4 +67,22 @@ button {
     width: 100%;
     display: block;
     border-radius: 5px;
+    font-family: "Digital-7", "Helvetica", "sans-serif";
+    font-size: 25px;
+}
+
+#clear, #undo {
+    font-size: xx-large;
+    font-weight: bold;
+    font-family: "Digital-7", "Helvetica", "sans-serif";
+}
+
+#clear {
+    background-color: darkred;
+    color: white;
+}
+
+@font-face {
+    font-family: "Digital-7";
+    src: url(fonts/digital-7.ttf);
 }
