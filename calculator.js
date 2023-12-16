@@ -7,6 +7,7 @@ let inputString = "";
 let firstNumber = NaN;
 let secondNumber = NaN;
 let operatorPresent = false;
+let justComputedResult = false;
 
 buttonRows.forEach(row => {
     Array.from(row.getElementsByTagName("button")).forEach(button => {
@@ -27,52 +28,35 @@ function buttonHandler(input) {
             operatorPresent = true;
         }
 
+        if (justComputedResult) {
+            justComputedResult = false;
+            inputString = "";
+            resultField.textContent = "";
+        }
+
         inputString += buttonContentNumber;
         operationsField.textContent = inputString;
     }
     else {
+        //run result if a valid operator is already present
         if (operatorPresent && checkIfOperator(input)) {
             computeResult();
-            inputString += " " + input + " ";
-            operationsField.textContent = inputString;
+            addOperator(input);
         }
         else if (inputString != "" && checkIfOperator(input)) {
-            if (checkIfOperator(inputString.charAt(inputString.length - 2))) {
-                inputString = inputString.replace(inputString.charAt(inputString.length - 2), input);
-            }
-            else {
-                inputString += " " + input + " ";
-            }           
-            resultField.textContent = inputString;
+            addOperator(input);
         }
         else if (input == "Clear") {
-            inputString = "";
-            resultField.textContent = inputString;
-            operationsField.textContent = "";
+            clearCalculator();
         }
         else if (inputString.length > 1 && (input == "Undo" || input == "Backspace")) {
-            inputArray = inputString.split(" ");
-            if (inputArray.pop() == "") {
-                inputArray.pop();
-            }
-            inputString = inputArray.join(" ");
-            resultField.textContent = inputString;
+            undoLastInput();
         }
         else if (inputString != "" && (input == "=" || input == "Enter")) {
             computeResult();
         }
         else if (input == ",") {
-            if (inputString == "") {
-                inputString = "0,";
-            }
-            else {
-                inputArray = inputString.split(" ");
-                if ((inputArray.length > 2 && !inputArray[2].includes(",")) 
-                    || (inputArray.length == 1 && !inputArray[0].includes(","))) {
-                    inputString += ".";
-                    operationsField.textContent = inputString;
-                }
-            }
+            addDecimalPoint();
         }
     }
 }
@@ -97,6 +81,7 @@ function computeResult() {
     resultField.textContent = result;
     inputString = String(result);
     operatorPresent = false;
+    justComputedResult = true;
 }
 
 function addNumbers(number1, number2) {
@@ -136,4 +121,46 @@ function checkIfOperator(contentString) {
 
 function getFunctionalOperator(contentString) {
     return contentString == "x" ? "*" : contentString;
+}
+
+function clearCalculator() {
+    inputString = "";
+    resultField.textContent = "";
+    operationsField.textContent = "";
+    justComputedResult = false;
+    operatorPresent = false;
+}
+
+function undoLastInput() {
+    inputArray = inputString.split(" ");
+    if (inputArray.pop() == "") {
+        inputArray.pop();
+    }
+    inputString = inputArray.join("");
+    resultField.textContent = inputString;
+}
+
+function addDecimalPoint() {
+    if (inputString == "") {
+        inputString = "0,";
+    }
+    else {
+        inputArray = inputString.split(" ");
+        if ((inputArray.length > 2 && !inputArray[2].includes(",")) 
+            || (inputArray.length == 1 && !inputArray[0].includes(","))) {
+            inputString += ".";
+            operationsField.textContent = inputString;
+        }
+    }
+}
+
+function addOperator(input) {
+    if (checkIfOperator(inputString.charAt(inputString.length - 2))) {
+        inputString = inputString.replace(inputString.charAt(inputString.length - 2), input);
+    }
+    else {
+        inputString += " " + input + " ";
+    } 
+    justComputedResult = false;          
+    operationsField.textContent = inputString;
 }
