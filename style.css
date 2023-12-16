@@ -36,6 +36,30 @@ body {
     font-family: "Digital-7", "Serif";
 }
 
+.result, .operation {
+    display: flex;
+    align-items: center;
+    justify-content: right;
+    padding-left: 2%;
+    padding-right: 2%;
+    text-align: right;
+    width: 94%;
+}
+
+.result {
+    margin-bottom: -5%;
+    font-size: 75px;
+    font-weight: bold;
+    height: 45%;
+    max-height: 45%;
+}
+
+.operation {
+    font-size: 40px;
+    height: 30%;
+    max-height: 45%;
+}
+
 .button-container {
     display: flex;
     flex-direction: column;
@@ -47,21 +71,6 @@ body {
     display: flex;
     height: 20%;
 }
-
-.result, .operation {
-    padding: 2%;
-}
-
-.result {
-    margin-bottom: -5%;
-    font-size: 75px;
-    font-weight: bold;
-}
-
-.operation {
-    font-size: 40px;
-}
-
 
 button {
     width: 100%;
