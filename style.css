@@ -34,7 +34,6 @@ body {
     width: 90%;
     height: 45%;
     font-family: "Digital-7", "Serif";
-    overflow: scroll;
 }
 
 .result, .operation {
@@ -45,8 +44,7 @@ body {
     padding-right: 2%;
     text-align: right;
     width: 94%;
-    overflow: scroll;
-    text-overflow: clip;
+    overflow: auto;
 }
 
 .result {
